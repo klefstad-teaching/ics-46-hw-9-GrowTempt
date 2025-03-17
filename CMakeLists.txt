@@ -39,6 +39,9 @@ if (GTest_FOUND)
     ${LADDER_SRC_FILES}
   )
   target_include_directories(student_gtests PRIVATE src ${GTEST_INCLUDE_DIRS})
-  target_link_libraries(student_gtests PRIVATE ${GTEST_LIBRARIES})
+  target_link_libraries(student_gtests PRIVATE ${GTEST_LIBRARIES} pthread asan ubsan)
+
+  target_compile_options(student_gtests PRIVATE -fno-sanitize=address,undefined)
+  target_link_options(student_gtests PRIVATE -fno-sanitize=address,undefined)
 endif()
 
