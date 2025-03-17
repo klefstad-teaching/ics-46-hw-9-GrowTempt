@@ -23,7 +23,7 @@ bool edit_distance_within(const string& str1, const string& str2, int d) {
                 if (diffCount > d) return false;
             }
         }
-        return (diffCount == 1); 
+        return (diffCount <= d);
     }
 
     const string& sShort = (str1.size() < str2.size()) ? str1 : str2;
@@ -45,6 +45,8 @@ bool edit_distance_within(const string& str1, const string& str2, int d) {
 }
 
 bool is_adjacent(const string& word1, const string& word2) {
+    if (word1 == word2)
+        return false;
     return edit_distance_within(word1, word2, 1);
 }
 
@@ -65,12 +67,12 @@ vector<string> generate_word_ladder(const string& begin_word, const string& end_
 
         const string& lastWord = currentLadder.back();
         for (auto & candidate : word_list) {
+            if (candidate == lastWord)
+                continue;
             if (!visited.count(candidate) && is_adjacent(lastWord, candidate)) {
                 visited.insert(candidate);
-
                 auto newLadder = currentLadder;
                 newLadder.push_back(candidate);
-
                 if (candidate == end_word) {
                     return newLadder;
                 }
