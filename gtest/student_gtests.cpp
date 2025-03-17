@@ -36,3 +36,22 @@ TEST(BFS, TestGenerateWordLadder) {
     EXPECT_EQ(ladder[2], "cog");
     EXPECT_EQ(ladder[3], "dog");
 }
+
+TEST(Dijkstra, Graph) {
+    Graph G;
+    G.numVertices = 3;
+    G.resize(3);
+    G[0].push_back(Edge(0,1,5));
+    G[1].push_back(Edge(1,2,2));
+    G[0].push_back(Edge(0,2,10));
+    vector<int> previous;
+    auto dist = dijkstra_shortest_path(G, 0, previous);
+    EXPECT_EQ(dist[0], 0);
+    EXPECT_EQ(dist[1], 5);
+    EXPECT_EQ(dist[2], 7);
+    auto path = extract_shortest_path(dist, previous, 2);
+    ASSERT_EQ(path.size(), 3u);
+    EXPECT_EQ(path[0], 0);
+    EXPECT_EQ(path[1], 1);
+    EXPECT_EQ(path[2], 2);
+}
