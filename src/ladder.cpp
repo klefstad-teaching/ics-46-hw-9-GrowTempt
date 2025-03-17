@@ -1,7 +1,9 @@
 #include "ladder.h"
+#include <fstream>
+#include <queue>
 #include <iostream>
 #include <cctype>
-
+#include <algorithm>
 using namespace std;
 
 void error(string word1, string word2, string msg) {
@@ -46,9 +48,64 @@ bool is_adjacent(const string& word1, const string& word2) {
     return edit_distance_within(word1, word2, 1);
 }
 
-vector<string> generate_word_ladder(const string&, const string&, const set<string>&) {
-    return {}; 
+vector<string> generate_word_ladder(const string& begin_word, const string& end_word, const set<string>& word_list) {
+    if (begin_word == end_word) {
+        return {};
+    }
+
+    queue<vector<string>> ladderQ;
+    ladderQ.push({ begin_word });
+
+    set<string> visited;
+    visited.insert(begin_word);
+
+    while (!ladderQ.empty()) {
+        auto currentLadder = ladderQ.front();
+        ladderQ.pop();
+
+        const string& lastWord = currentLadder.back();
+        for (auto & candidate : word_list) {
+            if (!visited.count(candidate) && is_adjacent(lastWord, candidate)) {
+                visited.insert(candidate);
+
+                auto newLadder = currentLadder;
+                newLadder.push_back(candidate);
+
+                if (candidate == end_word) {
+                    return newLadder;
+                }
+                ladderQ.push(newLadder);
+            }
+        }
+    }
+    return {};
 }
-void load_words(set<string>&, const string&) {}
-void print_word_ladder(const vector<string>&) {}
+
+void load_words(set<string> & word_list, const string& file_name) {
+    word_list.clear();
+    ifstream in(file_name);
+    if (!in) {
+        cerr << "Cannot open file: " << file_name << endl;
+        return;
+    }
+    string w;
+    while (in >> w) {
+        for (auto &c : w) {
+            c = tolower(static_cast<unsigned char>(c));
+        }
+        word_list.insert(w);
+    }
+}
+
+void print_word_ladder(const vector<string>& ladder) {
+    if (ladder.empty()) {
+        return;
+    }
+    for (size_t i = 0; i < ladder.size(); i++) {
+        cout << ladder[i];
+        if (i + 1 < ladder.size()) cout << " ";
+    }
+    cout << endl;
+}
+
 void verify_word_ladder() {}
